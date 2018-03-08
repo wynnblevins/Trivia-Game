@@ -9,23 +9,28 @@
         }
         var $questionArea = $('#questionArea');
         var $answersArea = $('#answersArea');
+        var token = null;
+        var $score = $('#score');
+
+        var keys = {
+            A: 65,
+            B: 66,
+            C: 67,
+            D: 68,
+            E: 69,
+            F: 70,
+            G: 71
+        };
 
         // represents current question object
         var questionData = null;
 
         $(document).on('keydown', function (event) {
-            var keys = {
-                A: 65,
-                B: 66,
-                C: 67,
-                D: 68,
-                E: 69,
-                F: 70,
-                G: 71
-            };
             var mp3 = null;
+            var correctAnswer = isCorrectAnswer(event.keyCode);
+            ++currentGame.questions;
 
-            if (isCorrectAnswer(event.keyCode)) {
+            if (correctAnswer) {
                 // play correct answer sound
                 mp3 = 'assets/audio/correct.mp3';
                 mediaPlayer.init(mp3);
@@ -33,10 +38,9 @@
 
                 // add one to tally of correct answers
                 currentGame.correct++;
-
-                var chosenAnswerNdx = getChosenAnswerNdx(event.keyCode); 
-                $($('#answersArea').children('h2').index(chosenAnswerNdx)).addClass('chosen-answer');
+                
             } else {  // user guessed wrong answer...
+                
                 // play wrong answer sound
                 mp3 = 'assets/audio/wrong.wav';
                 mediaPlayer.init(mp3);
@@ -46,25 +50,25 @@
                 currentGame.incorrect++;
 
                 // highlight chosen answer
-                var chosenAnswerNdx = getChosenAnswerNdx(event.keyCode); 
-                $($('#answersArea').children('h2').index(chosenAnswerNdx)).addClass('chosen-answer');
                 
                 // display correct answer
-                var correctAnswerNdx = getCorrectAnswerNdx(event.keyCode);
-                var ndx = $('#answersArea').children('h2').index(correctAnswerNdx);
-                $(ndx).addClass('correct-answer');
             }
+            
+            $('#score').text(`current game stats: 
+                \ncorrect guesses: ${currentGame.correct}
+                \nincorrect guesses: ${currentGame.incorrect}
+                \ntotal questions: ${currentGame.questions}`);
+            retrieveQuestion(token.token);
+            $('#answersArea').empty();
         });
 
-        function getCorrectAnswerNdx(answerKeyCode) {
-            var answerText = $('#answer' + String.fromCharCode(answerKeyCode)).text();
-            answerText = answerText.trim().slice();
-            $answersArea = $('#answersArea');
-            
-            var $h2 = $('h2');
-            for (var i = 0; i < $h2.length; i++) {
+        function onTimeRunOut() {
+            alert("Time is up!");
+            ++currentGame.incorrect;
+        }
 
-            }
+        function startTimer() {
+            setTimeout(function(){ onTimeRunOut() }, 5000);
         }
 
         function getChosenAnswerNdx(answerKeyCode) {
@@ -72,14 +76,32 @@
             return $answersArea.index($answerTextH2);
         }
 
-        function isCorrectAnswer(answerKeyCode) {
+        // removes answer's letter from answer so we're just left with the answer text
+        function getAnswerText(answerKeyCode) {
             var answerText = $('#answer' + String.fromCharCode(answerKeyCode)).text();
             var answerKeyStrLength = 3;
-            answerText = answerText.trim().slice(answerKeyStrLength);
+            
+            return answerText.trim().slice(answerKeyStrLength);
+        }
+
+        // answer is "incorrect" if it is a valid guess key but not the correct answer
+        function isCorrectAnswer(answerKeyCode) {
+            var answerText = getAnswerText(answerKeyCode);
             
             if (questionData.correct_answer === answerText) {
                 return true;
             } 
+
+            return false;
+        }
+
+        function isInvalidAnswer(answerKeyCode) {
+            var allAnswers = questionData.incorrect_answers.concat(questionData.correct_answer);
+            var userAnswer = String.fromCharCode(answerKeyCode);
+            
+            if (allAnswers.indexOf(userAnswer) === -1) {
+                return true;
+            }
 
             return false;
         }
@@ -93,6 +115,8 @@
                     ${choiceLetters[index]}) ${value}<h3>`) 
                 $answersArea.append($answer);
             });
+
+            startTimer();
         }
 
         function displayQuestion() {
@@ -109,6 +133,7 @@
                 type: 'GET'
             }).done(function (response) {
                 questionData = response.results[0];
+                console.log(questionData);
                 displayQuestion(questionData);
             });
         }
@@ -122,6 +147,7 @@
     
         function initializeGame() {
             retrieveSessionToken().then(function (tokenData) {
+                token = tokenData;
                 retrieveQuestion(tokenData.token);
             });
         }

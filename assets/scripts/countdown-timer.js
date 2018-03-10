@@ -9,11 +9,11 @@ var timer = (function () {
     }, 1000);
 
     return {
-        init: function () {
+        init: function (onTimeUp) {
             timerObj = setTimeout(function () {
                 clearInterval(myInterval);
                 clearTimeout(timerObj);
-                alert('Times Up!');        
+                onTimeUp();        
             }, 10000);
         },
 

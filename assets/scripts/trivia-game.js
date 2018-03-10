@@ -1,4 +1,4 @@
-(function ($, shuffleService, timer) {
+var triviaGame = (function ($, shuffleService, timer) {
     $(document).ready(function () {
         'use strict';
     
@@ -56,14 +56,24 @@
                 // display correct answer
             }
 
-            $('#score').empty();
+            emptyGameBoard();
             $('#score').append(`<p>current game stats:</p> 
                 \n<p>correct guesses: ${currentGame.correct}</p>
                 \n<p>incorrect guesses: ${currentGame.incorrect}</p>
                 \n<p>total questions: ${currentGame.questions}</p>`);
             retrieveQuestion(token.token);
-            $('#answersArea').empty();
         });
+
+        $(document).on('click', '#nextButton', function (event) {
+            emptyGameBoard();
+            retrieveQuestion(token.token);
+            $('#buttonsArea').empty();
+        });
+
+        function emptyGameBoard() {
+            $('#score').empty();
+            $('#answersArea').empty();
+        }
 
         function getChosenAnswerNdx(answerKeyCode) {
             var $answerTextH2 = $('#answer' + String.fromCharCode(answerKeyCode));
@@ -111,6 +121,12 @@
             });
         }
 
+        function addNextButton() {
+            var buttonMarkup = `<button id="nextButton" class="btn btn-default">
+                Next <span class="glyphicon glyphicon-arrow-right"></span></button>`;
+            $('#buttonsArea').append(buttonMarkup);
+        }
+        
         function displayQuestion() {
             var answers = questionData.incorrect_answers.concat(questionData.correct_answer);
             answers = shuffleService.shuffle(answers);
@@ -118,7 +134,10 @@
             
             displayPossibleAnswers(answers);  
             
-            timer.init();
+            timer.init(function () {
+                alert('Times up!!');
+                addNextButton();
+            });
         }
     
         function retrieveQuestion(sessionToken) {    
@@ -127,7 +146,6 @@
                 type: 'GET'
             }).done(function (response) {
                 questionData = response.results[0];
-                console.log(questionData);
                 displayQuestion(questionData);
             });
         }

@@ -25,7 +25,7 @@ var triviaGame = (function ($, shuffleService, timer) {
         // represents current question object
         var questionData = null;
 
-        $(document).on('keydown', function (event) {
+        var keyWasPressed = function (event) {
             timer.stop();
             
             var mp3 = null;
@@ -62,14 +62,21 @@ var triviaGame = (function ($, shuffleService, timer) {
                 \n<p>incorrect guesses: ${currentGame.incorrect}</p>
                 \n<p>total questions: ${currentGame.questions}</p>`);
             retrieveQuestion(token.token);
-        });
+        }
 
         $(document).on('click', '#nextButton', function (event) {
             emptyGameBoard();
             retrieveQuestion(token.token);
             $('#buttonsArea').empty();
+            attachKeyEvent();
         });
-
+        
+        function attachKeyEvent() {
+            $(document).on('keydown', function (event) {
+                keyWasPressed(event)
+            });
+        }
+        
         function emptyGameBoard() {
             $('#score').empty();
             $('#answersArea').empty();
@@ -127,6 +134,10 @@ var triviaGame = (function ($, shuffleService, timer) {
             $('#buttonsArea').append(buttonMarkup);
         }
         
+        function disableKeyPresses() {
+            $(document).off('keydown');
+        }
+
         function displayQuestion() {
             var answers = questionData.incorrect_answers.concat(questionData.correct_answer);
             answers = shuffleService.shuffle(answers);
@@ -136,6 +147,7 @@ var triviaGame = (function ($, shuffleService, timer) {
             
             timer.init(function () {
                 alert('Times up!!');
+                disableKeyPresses();
                 addNextButton();
             });
         }
@@ -163,7 +175,8 @@ var triviaGame = (function ($, shuffleService, timer) {
                 retrieveQuestion(tokenData.token);
             });
         }
-    
+
+        attachKeyEvent();
         initializeGame();
     });
 })($, shuffleService, timer);

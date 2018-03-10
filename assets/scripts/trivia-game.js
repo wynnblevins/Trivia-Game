@@ -1,4 +1,4 @@
-(function ($, shuffleService) {
+(function ($, shuffleService, timer) {
     $(document).ready(function () {
         'use strict';
     
@@ -6,7 +6,7 @@
             questions: 0,
             correct: 0,
             incorrect: 0
-        }
+        };
         var $questionArea = $('#questionArea');
         var $answersArea = $('#answersArea');
         var token = null;
@@ -26,6 +26,8 @@
         var questionData = null;
 
         $(document).on('keydown', function (event) {
+            timer.stop();
+            
             var mp3 = null;
             var correctAnswer = isCorrectAnswer(event.keyCode);
             ++currentGame.questions;
@@ -53,23 +55,15 @@
                 
                 // display correct answer
             }
-            
-            $('#score').text(`current game stats: 
-                \ncorrect guesses: ${currentGame.correct}
-                \nincorrect guesses: ${currentGame.incorrect}
-                \ntotal questions: ${currentGame.questions}`);
+
+            $('#score').empty();
+            $('#score').append(`<p>current game stats:</p> 
+                \n<p>correct guesses: ${currentGame.correct}</p>
+                \n<p>incorrect guesses: ${currentGame.incorrect}</p>
+                \n<p>total questions: ${currentGame.questions}</p>`);
             retrieveQuestion(token.token);
             $('#answersArea').empty();
         });
-
-        function onTimeRunOut() {
-            alert("Time is up!");
-            ++currentGame.incorrect;
-        }
-
-        function startTimer() {
-            setTimeout(function(){ onTimeRunOut() }, 5000);
-        }
 
         function getChosenAnswerNdx(answerKeyCode) {
             var $answerTextH2 = $('#answer' + String.fromCharCode(answerKeyCode));
@@ -115,8 +109,6 @@
                     ${choiceLetters[index]}) ${value}<h3>`) 
                 $answersArea.append($answer);
             });
-
-            startTimer();
         }
 
         function displayQuestion() {
@@ -124,7 +116,9 @@
             answers = shuffleService.shuffle(answers);
             $questionArea.html('<h2>' + questionData.question + '</h2>');
             
-            displayPossibleAnswers(answers);    
+            displayPossibleAnswers(answers);  
+            
+            timer.init();
         }
     
         function retrieveQuestion(sessionToken) {    
@@ -154,4 +148,4 @@
     
         initializeGame();
     });
-})($, shuffleService);
+})($, shuffleService, timer);

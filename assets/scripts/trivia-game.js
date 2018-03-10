@@ -11,6 +11,8 @@ var triviaGame = (function ($, shuffleService, timer) {
         var $answersArea = $('#answersArea');
         var token = null;
         var $score = $('#score');
+        var $timer = $('#timer');
+        var requestWasMade = false;
 
         var keys = {
             A: 65,
@@ -27,7 +29,8 @@ var triviaGame = (function ($, shuffleService, timer) {
 
         var keyWasPressed = function (event) {
             timer.stop();
-            
+            timer.resetCount();
+
             var mp3 = null;
             var correctAnswer = isCorrectAnswer(event.keyCode);
             ++currentGame.questions;
@@ -149,17 +152,24 @@ var triviaGame = (function ($, shuffleService, timer) {
                 alert('Times up!!');
                 disableKeyPresses();
                 addNextButton();
+                timer.resetCount();
+            }, function (count) {
+                $timer.text(count);        
             });
         }
     
         function retrieveQuestion(sessionToken) {    
-            $.ajax({
-                url: 'https://opentdb.com/api.php?amount=1&token=' + sessionToken,
-                type: 'GET'
-            }).done(function (response) {
-                questionData = response.results[0];
-                displayQuestion(questionData);
-            });
+            if (!requestWasMade) {
+                requestWasMade = true;
+                $.ajax({
+                    url: 'https://opentdb.com/api.php?amount=1&token=' + sessionToken,
+                    type: 'GET'
+                }).done(function (response) {
+                    questionData = response.results[0];
+                    displayQuestion(questionData);
+                    requestWasMade = false;
+                });
+            }
         }
         
         function retrieveSessionToken() {

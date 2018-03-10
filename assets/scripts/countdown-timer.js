@@ -3,13 +3,16 @@ var timer = (function () {
     var timerObj;
     var count = 10;
 
-    var myInterval = setInterval(function () {
-        console.log(count);
-        count--;
-    }, 1000);
+    var myInterval = null;
+    
+    var timer = {
+        init: function (onTimeUp, onTick) {        
+            count = 10;
+            myInterval = setInterval(function () {
+                count--;
+                onTick(count);
+            }, 1000);
 
-    return {
-        init: function (onTimeUp) {
             timerObj = setTimeout(function () {
                 clearInterval(myInterval);
                 clearTimeout(timerObj);
@@ -17,9 +20,15 @@ var timer = (function () {
             }, 10000);
         },
 
+        resetCount() {
+            count = 10;
+        },
+
         stop: function () {
             clearTimeout(timerObj);
             clearInterval(myInterval);
         }
     };
+
+    return timer; 
 })();

@@ -66,7 +66,7 @@ var triviaGame = (function ($, shuffleService, timer) {
                 \n<h4>incorrect guesses: ${currentGame.incorrect}</h4>
                 \n<h4>total questions: ${currentGame.questions}</h4>`);
             retrieveQuestion(token.token);
-        }
+        };
 
         $(document).on('click', '#nextButton', function (event) {
             emptyGameBoard();
@@ -77,7 +77,7 @@ var triviaGame = (function ($, shuffleService, timer) {
         
         function attachKeyEvent() {
             $(document).on('keydown', function (event) {
-                keyWasPressed(event)
+                keyWasPressed(event);
             });
         }
         
@@ -127,7 +127,7 @@ var triviaGame = (function ($, shuffleService, timer) {
             
             $.each(possibleAnswers, function (index, value) {
                 var $answer = $(`<h3 id="answer${choiceLetters[index]}">
-                    ${choiceLetters[index]}) ${value}<h3>`) 
+                    ${choiceLetters[index]}) ${value}<h3>`); 
                 $answersArea.append($answer);
             });
         }
@@ -153,7 +153,7 @@ var triviaGame = (function ($, shuffleService, timer) {
             timer.init(function () {
                 mediaPlayer.init('assets/audio/timesup.mp3');
                 mediaPlayer.play();
-                
+
                 disableKeyPresses();
                 addNextButton();
                 timer.resetCount();

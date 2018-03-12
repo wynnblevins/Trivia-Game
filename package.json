@@ -16,7 +16,19 @@
     "url": "https://github.com/wynnblevins/Trivia-Game/issues"
   },
   "homepage": "https://github.com/wynnblevins/Trivia-Game#readme",
-  "dependencies": {
-    "jslint": "^0.12.0"
+  "devDependencies": {
+    "jshint": "^2.9.5"
+  },
+  "jshintConfig": {
+    "undef": "true",
+    "unused": "true",
+    "esversion": 6,
+    "globals": {
+      "document": true,
+      "$": true,
+      "timer": true,
+      "mediaPlayer": true,
+      "shuffleService": true
+    }
   }
 }

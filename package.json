@@ -1,0 +1,22 @@
+{
+  "name": "trivia-game",
+  "version": "1.0.0",
+  "description": "A game which pulls trivia questions from a free API and poses them to the user.  User has ten seconds to answer each question.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wynnblevins/Trivia-Game.git"
+  },
+  "author": "Wynn Blevins",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wynnblevins/Trivia-Game/issues"
+  },
+  "homepage": "https://github.com/wynnblevins/Trivia-Game#readme",
+  "dependencies": {
+    "jslint": "^0.12.0"
+  }
+}

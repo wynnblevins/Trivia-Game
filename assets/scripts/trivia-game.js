@@ -61,7 +61,7 @@ var triviaGame = (function ($, shuffleService, timer) {
 
             emptyGameBoard();
             
-            $('#scoreWrapper').html(`<h3>Current Game Stats:</h3> 
+            $('#scoreWrapper').html(`<h3 class="jeopardy-text">Current Game Stats:</h3> 
                 \n<h4>correct guesses: ${currentGame.correct}</h4>
                 \n<h4>incorrect guesses: ${currentGame.incorrect}</h4>
                 \n<h4>total questions: ${currentGame.questions}</h4>`);
@@ -148,14 +148,17 @@ var triviaGame = (function ($, shuffleService, timer) {
             $questionArea.html('<h2>' + questionData.question + '</h2>');
             $timer.text('Ready... Set...');
             displayPossibleAnswers(answers);  
-            
+            var secondsRemaingTxt = ' Seconds Remaining';
+
             timer.init(function () {
-                alert('Times up!!');
+                mediaPlayer.init('assets/audio/timesup.mp3');
+                mediaPlayer.play();
+                
                 disableKeyPresses();
                 addNextButton();
                 timer.resetCount();
             }, function (count) {
-                $timer.text(count + ' Seconds Remaining!');        
+                $timer.text(count + secondsRemaingTxt);        
             });
         }
     

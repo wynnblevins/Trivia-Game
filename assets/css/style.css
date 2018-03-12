@@ -1,5 +1,14 @@
+@font-face {
+    font-family: 'Jeopardy-Text';
+    src: url('../fonts/jeopardy/gyparody.ttf');
+}
+
+.jeopardy-text {
+    font-family: 'Jeopardy-Text'
+}
+
 .sectionBox {
-    border: 2px solid #000
+    border: 2px solid #fff;
 }
 
 body {
@@ -11,4 +20,12 @@ body {
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
+}
+
+.centered-text {
+    text-align: center;
+}
+
+h1, h2, h3, h4, h5, p {
+    color: #fff;
 }

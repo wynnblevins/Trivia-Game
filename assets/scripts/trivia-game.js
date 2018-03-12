@@ -1,7 +1,7 @@
 var triviaGame = (function ($, shuffleService, timer) {
-    $(document).ready(function () {
-        'use strict';
+    'use strict';
     
+    $(document).ready(function () {
         var currentGame = {
             questions: 0,
             correct: 0,
@@ -60,10 +60,11 @@ var triviaGame = (function ($, shuffleService, timer) {
             }
 
             emptyGameBoard();
-            $('#score').append(`<p>current game stats:</p> 
-                \n<p>correct guesses: ${currentGame.correct}</p>
-                \n<p>incorrect guesses: ${currentGame.incorrect}</p>
-                \n<p>total questions: ${currentGame.questions}</p>`);
+            
+            $('#scoreWrapper').html(`<h3>Current Game Stats:</h3> 
+                \n<h4>correct guesses: ${currentGame.correct}</h4>
+                \n<h4>incorrect guesses: ${currentGame.incorrect}</h4>
+                \n<h4>total questions: ${currentGame.questions}</h4>`);
             retrieveQuestion(token.token);
         }
 
@@ -145,7 +146,7 @@ var triviaGame = (function ($, shuffleService, timer) {
             var answers = questionData.incorrect_answers.concat(questionData.correct_answer);
             answers = shuffleService.shuffle(answers);
             $questionArea.html('<h2>' + questionData.question + '</h2>');
-            
+            $timer.text('Ready... Set...');
             displayPossibleAnswers(answers);  
             
             timer.init(function () {
@@ -154,7 +155,7 @@ var triviaGame = (function ($, shuffleService, timer) {
                 addNextButton();
                 timer.resetCount();
             }, function (count) {
-                $timer.text(count);        
+                $timer.text(count + ' Seconds Remaining!');        
             });
         }
     

@@ -9,11 +9,13 @@ var triviaGame = (function ($, shuffleService, timer) {
         };
         var $questionArea = $('#questionArea');
         var $answersArea = $('#answersArea');
+        var $innerButtonsArea = $('#innerButtonArea');
+        var $buttonsArea = $('#buttonsArea');
         var token = null;
         var $score = $('#score');
         var $timer = $('#timer');
         var requestWasMade = false;
-
+        var answerButtonIds = ['button-a', 'button-b', 'button-c', 'button-d'];
         var keys = {
             A: 65,
             B: 66,
@@ -27,14 +29,14 @@ var triviaGame = (function ($, shuffleService, timer) {
         // represents current question object
         var questionData = null;
 
-        var keyWasPressed = function (event) {
+        function resetClock() {
             timer.stop();
             timer.resetCount();
+        }
 
+        function keepScore(correctAnswer) {
             var mp3 = null;
-            var correctAnswer = isCorrectAnswer(event.keyCode);
-            ++currentGame.questions;
-
+             
             if (correctAnswer) {
                 // play correct answer sound
                 mp3 = 'assets/audio/correct.mp3';
@@ -58,7 +60,17 @@ var triviaGame = (function ($, shuffleService, timer) {
                 
                 // display correct answer
             }
+        }
 
+        var keyWasPressed = function (event) {
+            resetClock();
+
+            var mp3 = null;
+            var correctAnswer = isCorrectAnswer(event.keyCode);
+            ++currentGame.questions;
+
+            keepScore(correctAnswer);
+            
             emptyGameBoard();
             
             $('#scoreWrapper').html(`<h3 class="jeopardy-text">Current Game Stats:</h3> 
@@ -71,14 +83,77 @@ var triviaGame = (function ($, shuffleService, timer) {
         $(document).on('click', '#nextButton', function (event) {
             emptyGameBoard();
             retrieveQuestion(token.token);
-            $('#buttonsArea').empty();
             attachKeyEvent();
+            resetClock();
+            enableButtons();
         });
         
+        $(document).on('click', '#button-A', aclick); 
+        function aclick () {
+            resetClock();
+            var correctAnswer = isCorrectAnswer(keys.A);
+            keepScore(correctAnswer);
+            
+            emptyGameBoard();
+            
+            $('#scoreWrapper').html(`<h3 class="jeopardy-text">Current Game Stats:</h3> 
+                \n<h4>correct guesses: ${currentGame.correct}</h4>
+                \n<h4>incorrect guesses: ${currentGame.incorrect}</h4>
+                \n<h4>total questions: ${currentGame.questions}</h4>`);
+            retrieveQuestion(token.token);
+        }
+
+        $(document).on('click', '#button-B', bclick);
+        function bclick() {
+            resetClock();
+            var correctAnswer = isCorrectAnswer(keys.B);
+            keepScore(correctAnswer);
+            
+            emptyGameBoard();
+            
+            $('#scoreWrapper').html(`<h3 class="jeopardy-text">Current Game Stats:</h3> 
+                \n<h4>correct guesses: ${currentGame.correct}</h4>
+                \n<h4>incorrect guesses: ${currentGame.incorrect}</h4>
+                \n<h4>total questions: ${currentGame.questions}</h4>`);
+            retrieveQuestion(token.token);
+        }
+
+        $(document).on('click', '#button-C', cclick);
+        function cclick() {
+            resetClock();
+            var correctAnswer = isCorrectAnswer(keys.C);
+            keepScore(correctAnswer);
+            
+            emptyGameBoard();
+            
+            $('#scoreWrapper').html(`<h3 class="jeopardy-text">Current Game Stats:</h3> 
+                \n<h4>correct guesses: ${currentGame.correct}</h4>
+                \n<h4>incorrect guesses: ${currentGame.incorrect}</h4>
+                \n<h4>total questions: ${currentGame.questions}</h4>`);
+            retrieveQuestion(token.token);
+        }
+
+        $(document).on('click', '#button-D', dclick)
+        function dclick () {
+            resetClock();
+            var correctAnswer = isCorrectAnswer(keys.D);
+            keepScore(correctAnswer);
+            
+            emptyGameBoard();
+            
+            $('#scoreWrapper').html(`<h3 class="jeopardy-text">Current Game Stats:</h3> 
+                \n<h4>correct guesses: ${currentGame.correct}</h4>
+                \n<h4>incorrect guesses: ${currentGame.incorrect}</h4>
+                \n<h4>total questions: ${currentGame.questions}</h4>`);
+            retrieveQuestion(token.token);
+        }
+
         function attachKeyEvent() {
             $(document).on('keydown', function (event) {
                 keyWasPressed(event);
             });
+
+
         }
         
         function emptyGameBoard() {
@@ -123,31 +198,71 @@ var triviaGame = (function ($, shuffleService, timer) {
 
         function displayPossibleAnswers(possibleAnswers) {
             // I'm assuming that we'll never have more than 7 possible choices
-            var choiceLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];  
+            var choiceLetters = [
+                {letter: 'A'}, 
+                {letter: 'B'}, 
+                {letter: 'C'}, 
+                {letter: 'D'}, 
+                {letter: 'E'}, 
+                {letter: 'F'}, 
+                {letter: 'G'}
+            ];  
+            var $innerButtonArea = $('div#innerButtonArea');
             
             $.each(possibleAnswers, function (index, value) {
-                var $answer = $(`<h3 id="answer${choiceLetters[index]}">
-                    ${choiceLetters[index]}) ${value}<h3>`); 
+                var $answer = $(`<button class='btn btn-default answer-button' 
+                    id='button-${choiceLetters[index].letter}'>${choiceLetters[index].letter}</button>
+                    <h3 class="answer-text" id="answer${choiceLetters[index].letter}">
+                    ${choiceLetters[index].letter}) ${value}<h3>`); 
                 $answersArea.append($answer);
             });
         }
 
         function addNextButton() {
+            // remove timer text
+            
+            // add next button where timer was
             var buttonMarkup = `<button id="nextButton" class="btn btn-default">
                 Next <span class="glyphicon glyphicon-arrow-right"></span></button>`;
-            $('#buttonsArea').append(buttonMarkup);
+            $('#timerArea').append(buttonMarkup);
         }
-        
+
         function disableKeyPresses() {
             $(document).off('keydown');
         }
 
+        function disableButtons() {
+            var $answerButtons = $('.answer-button');
+            $(document).off('click', '#button-A', aclick);
+            $(document).off('click', '#button-B', bclick);
+            $(document).off('click', '#button-C', cclick);
+            $(document).off('click', '#button-D', dclick);    
+        }
+
+        function enableButtons() {
+            var $answerButtons = $('.answer-button');
+            $(document).on('click', '#button-A', aclick);
+            $(document).on('click', '#button-B', bclick);
+            $(document).on('click', '#button-C', cclick);
+            $(document).on('click', '#button-D', dclick);    
+        }
+
         function displayQuestion() {
+            $('#nextButton').remove();
+            $('#buttonsArea').remove();
+
             var answers = questionData.incorrect_answers.concat(questionData.correct_answer);
             answers = shuffleService.shuffle(answers);
             $questionArea.html('<h2>' + questionData.question + '</h2>');
             $timer.text('Ready... Set...');
-            displayPossibleAnswers(answers);  
+            
+
+            displayPossibleAnswers(answers); 
+
+            handleTimer();
+        }
+    
+        function handleTimer() {
             var secondsRemaingTxt = ' Seconds Remaining';
 
             timer.init(function () {
@@ -155,13 +270,14 @@ var triviaGame = (function ($, shuffleService, timer) {
                 mediaPlayer.play();
 
                 disableKeyPresses();
+                disableButtons();
                 addNextButton();
                 timer.resetCount();
             }, function (count) {
                 $timer.text(count + secondsRemaingTxt);        
             });
         }
-    
+
         function retrieveQuestion(sessionToken) {    
             if (!requestWasMade) {
                 requestWasMade = true;
@@ -170,6 +286,7 @@ var triviaGame = (function ($, shuffleService, timer) {
                     type: 'GET'
                 }).done(function (response) {
                     questionData = response.results[0];
+                    console.log(questionData.correct_answer);
                     displayQuestion(questionData);
                     requestWasMade = false;
                 });

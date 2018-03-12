@@ -22,7 +22,12 @@ body {
     background-size: cover;
 }
 
-@media screen and (max-height: 675px) {
+#nextButton {
+    margin: 0 auto;
+    display: block;
+}
+
+@media screen and (max-width: 768px) {
     body {
         background: url('../images/jeopardy_background_tall.jpg');
         background-repeat: no-repeat; 
@@ -33,6 +38,30 @@ body {
         -o-background-size: cover;
         background-size: cover;
     }
+}
+
+.answer-text {
+    display: inline;
+}
+
+div#buttonsArea {
+    display: block;
+}    
+
+div#buttonsArea > div#innerButtonArea > #button-a {
+    background-color: red;
+}
+
+div#buttonsArea > div#innerButtonArea > #button-b {
+    background-color: blue;
+}
+
+div#buttonsArea > div#innerButtonArea > #button-c {
+    background-color: yellow; 
+}
+
+div#buttonsArea > div#innerButtonArea > #button-d {
+    background-color: green;
 }
 
 .centered-text {

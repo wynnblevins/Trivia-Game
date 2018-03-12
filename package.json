@@ -28,7 +28,12 @@
       "$": true,
       "timer": true,
       "mediaPlayer": true,
-      "shuffleService": true
+      "shuffleService": true,
+      "setInterval": true,
+      "clearTimeout": true,
+      "clearInterval": true,
+      "setTimeout": true,
+      "Audio": true
     }
   }
 }

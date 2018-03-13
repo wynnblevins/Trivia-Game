@@ -11,6 +11,10 @@
     border: 2px solid #fff;
 }
 
+#timer {
+    margin-bottom: 15px;
+}
+
 body {
     background: url('../images/jeopardy_background.jpg');
     background-repeat: no-repeat; 

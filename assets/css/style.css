@@ -24,7 +24,11 @@ body {
 
 #nextButton {
     margin: 0 auto;
-    display: block;
+    display: inline-block;
+}
+
+.inline-text {
+    display: inline-block;
 }
 
 @media screen and (max-width: 768px) {
@@ -41,28 +45,12 @@ body {
 }
 
 .answer-text {
-    display: inline;
+    display: inline-block;
 }
 
 div#buttonsArea {
     display: block;
 }    
-
-div#buttonsArea > div#innerButtonArea > #button-a {
-    background-color: red;
-}
-
-div#buttonsArea > div#innerButtonArea > #button-b {
-    background-color: blue;
-}
-
-div#buttonsArea > div#innerButtonArea > #button-c {
-    background-color: yellow; 
-}
-
-div#buttonsArea > div#innerButtonArea > #button-d {
-    background-color: green;
-}
 
 .centered-text {
     text-align: center;

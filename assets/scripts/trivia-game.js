@@ -168,10 +168,7 @@ var triviaGame = (function ($, shuffleService, timer) {
 
         // removes answer's letter from answer so we're just left with the answer text
         function getAnswerText(answerKeyCode) {
-            var answerText = $('#answer' + String.fromCharCode(answerKeyCode)).text();
-            var answerKeyStrLength = 3;
-            
-            return answerText.trim().slice(answerKeyStrLength);
+            return $('#answer' + String.fromCharCode(answerKeyCode)).text();
         }
 
         // answer is "incorrect" if it is a valid guess key but not the correct answer
@@ -210,10 +207,9 @@ var triviaGame = (function ($, shuffleService, timer) {
             var $innerButtonArea = $('div#innerButtonArea');
             
             $.each(possibleAnswers, function (index, value) {
-                var $answer = $(`<button class='btn btn-default answer-button' 
-                    id='button-${choiceLetters[index].letter}'>${choiceLetters[index].letter}</button>
-                    <h3 class="answer-text" id="answer${choiceLetters[index].letter}">
-                    ${choiceLetters[index].letter}) ${value}<h3>`); 
+                var $answer = $(`<div class="block-wrapper"><button type='button' class='btn btn-default' 
+                    id='button-${choiceLetters[index].letter}'>${choiceLetters[index].letter}
+                    </button><h3 class="answer-text" id="answer${choiceLetters[index].letter}">${value}</h3></div>`); 
                 $answersArea.append($answer);
             });
         }
@@ -222,7 +218,7 @@ var triviaGame = (function ($, shuffleService, timer) {
             // remove timer text
             
             // add next button where timer was
-            var buttonMarkup = `<button id="nextButton" class="btn btn-default">
+            var buttonMarkup = `<button id="nextButton" class="btn btn-default inline-btn">
                 Next <span class="glyphicon glyphicon-arrow-right"></span></button>`;
             $('#timerArea').append(buttonMarkup);
         }

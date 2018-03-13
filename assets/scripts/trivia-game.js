@@ -133,7 +133,7 @@ var triviaGame = (function ($, shuffleService, timer) {
             retrieveQuestion(token.token);
         }
 
-        $(document).on('click', '#button-D', dclick)
+        $(document).on('click', '#button-D', dclick);
         function dclick () {
             resetClock();
             var correctAnswer = isCorrectAnswer(keys.D);
@@ -280,7 +280,6 @@ var triviaGame = (function ($, shuffleService, timer) {
                     type: 'GET'
                 }).done(function (response) {
                     questionData = response.results[0];
-                    console.log(questionData.correct_answer);
                     displayQuestion(questionData);
                     requestWasMade = false;
                 });

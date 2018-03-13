@@ -25,6 +25,7 @@ body {
 #nextButton {
     margin: 0 auto;
     display: inline-block;
+    vertical-align: middle;
 }
 
 .inline-text {

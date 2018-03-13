@@ -152,8 +152,6 @@ var triviaGame = (function ($, shuffleService, timer) {
             $(document).on('keydown', function (event) {
                 keyWasPressed(event);
             });
-
-
         }
         
         function emptyGameBoard() {

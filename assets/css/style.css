@@ -26,6 +26,7 @@ body {
     margin: 0 auto;
     display: inline-block;
     vertical-align: middle;
+    margin-bottom: 15px;
 }
 
 .inline-text {

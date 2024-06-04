@@ -2,20 +2,18 @@ var triviaGame = (function ($, shuffleService, timer) {
     'use strict';
     
     $(document).ready(function () {
+        let blockAnswers = true;
         var currentGame = {
             questions: 0,
             correct: 0,
             incorrect: 0
         };
+        var $timer
         var $questionArea = $('#questionArea');
         var $answersArea = $('#answersArea');
-        var $innerButtonsArea = $('#innerButtonArea');
-        var $buttonsArea = $('#buttonsArea');
         var token = null;
-        var $score = $('#score');
         var $timer = $('#timer');
         var requestWasMade = false;
-        var answerButtonIds = ['button-a', 'button-b', 'button-c', 'button-d'];
         var keys = {
             A: 65,
             B: 66,
@@ -36,7 +34,7 @@ var triviaGame = (function ($, shuffleService, timer) {
 
         function keepScore(correctAnswer) {
             var mp3 = null;
-             
+            
             if (correctAnswer) {
                 // play correct answer sound
                 mp3 = 'assets/audio/correct.mp3';
@@ -46,6 +44,7 @@ var triviaGame = (function ($, shuffleService, timer) {
                 // add one to tally of correct answers
                 currentGame.correct++;
                 
+                $timer.html('<h2>Correct!</h2>');
             } else {  // user guessed wrong answer...
                 
                 // play wrong answer sound
@@ -56,21 +55,18 @@ var triviaGame = (function ($, shuffleService, timer) {
                 // count against wrong answers 
                 currentGame.incorrect++;
 
-                // highlight chosen answer
-                
-                // display correct answer
+                $timer.html('<h2>Wrong!</h2>');
             }
         }
 
         var keyWasPressed = function (event) {
             resetClock();
 
-            var mp3 = null;
             var correctAnswer = isCorrectAnswer(event.keyCode);
             ++currentGame.questions;
 
             keepScore(correctAnswer);
-            
+            disableKeyPresses();
             emptyGameBoard();
             
             $('#scoreWrapper').html(`<h3 class="jeopardy-text">Current Game Stats:</h3> 
@@ -157,11 +153,7 @@ var triviaGame = (function ($, shuffleService, timer) {
         function emptyGameBoard() {
             $('#score').empty();
             $('#answersArea').empty();
-        }
-
-        function getChosenAnswerNdx(answerKeyCode) {
-            var $answerTextH2 = $('#answer' + String.fromCharCode(answerKeyCode));
-            return $answersArea.index($answerTextH2);
+            
         }
 
         // removes answer's letter from answer so we're just left with the answer text
@@ -180,17 +172,6 @@ var triviaGame = (function ($, shuffleService, timer) {
             return false;
         }
 
-        function isInvalidAnswer(answerKeyCode) {
-            var allAnswers = questionData.incorrect_answers.concat(questionData.correct_answer);
-            var userAnswer = String.fromCharCode(answerKeyCode);
-            
-            if (allAnswers.indexOf(userAnswer) === -1) {
-                return true;
-            }
-
-            return false;
-        }
-
         function displayPossibleAnswers(possibleAnswers) {
             // I'm assuming that we'll never have more than 7 possible choices
             var choiceLetters = [
@@ -202,7 +183,6 @@ var triviaGame = (function ($, shuffleService, timer) {
                 {letter: 'F'}, 
                 {letter: 'G'}
             ];  
-            var $innerButtonArea = $('div#innerButtonArea');
             
             $.each(possibleAnswers, function (index, value) {
                 var $answer = $(`<div class="block-wrapper"><button type='button' class='btn btn-default' 
@@ -225,8 +205,11 @@ var triviaGame = (function ($, shuffleService, timer) {
             $(document).off('keydown');
         }
 
+        function enableKeyPresses() {
+            $(document).on('keydown');
+        }
+
         function disableButtons() {
-            var $answerButtons = $('.answer-button');
             $(document).off('click', '#button-A', aclick);
             $(document).off('click', '#button-B', bclick);
             $(document).off('click', '#button-C', cclick);
@@ -234,7 +217,6 @@ var triviaGame = (function ($, shuffleService, timer) {
         }
 
         function enableButtons() {
-            var $answerButtons = $('.answer-button');
             $(document).on('click', '#button-A', aclick);
             $(document).on('click', '#button-B', bclick);
             $(document).on('click', '#button-C', cclick);
@@ -252,7 +234,7 @@ var triviaGame = (function ($, shuffleService, timer) {
             
 
             displayPossibleAnswers(answers); 
-
+            attachKeyEvent();
             handleTimer();
         }
     
@@ -275,14 +257,16 @@ var triviaGame = (function ($, shuffleService, timer) {
         function retrieveQuestion(sessionToken) {    
             if (!requestWasMade) {
                 requestWasMade = true;
-                $.ajax({
-                    url: 'https://opentdb.com/api.php?amount=1&token=' + sessionToken,
-                    type: 'GET'
-                }).done(function (response) {
-                    questionData = response.results[0];
-                    displayQuestion(questionData);
-                    requestWasMade = false;
-                });
+                setTimeout(() => {
+                    $.ajax({
+                        url: 'https://opentdb.com/api.php?amount=1&token=' + sessionToken,
+                        type: 'GET'
+                    }).done(function (response) {
+                        questionData = response.results[0];
+                        displayQuestion(questionData);
+                        requestWasMade = false;
+                    });
+                }, 5000)
             }
         }
         

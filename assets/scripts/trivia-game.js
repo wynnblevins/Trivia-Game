@@ -57,13 +57,14 @@ var triviaGame = (function ($, shuffleService, timer) {
 
                 $timer.html('<h2>Wrong!</h2>');
             }
+
+            ++currentGame.questions;
         }
 
         var keyWasPressed = function (event) {
             resetClock();
 
             var correctAnswer = isCorrectAnswer(event.keyCode);
-            ++currentGame.questions;
 
             keepScore(correctAnswer);
             disableKeyPresses();
@@ -284,7 +285,6 @@ var triviaGame = (function ($, shuffleService, timer) {
             });
         }
 
-        attachKeyEvent();
         initializeGame();
     });
 })($, shuffleService, timer);
